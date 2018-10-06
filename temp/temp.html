@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <style type="text/css">
+            html { height: 100% }
+            body { height: 100%; margin: 0px; padding: 0px }
+            #map_canvas { height: 100% }
+        </style>
+    </head>
+    <body onload="initialize()">
+        <div id="map_canvas" style="width:100%; height:100%"></div>
+    </body>
+    <script type="text/javascript">
+            function initialize() {
+                /*Getting Self Location*/
+                infoWindow = new google.maps.InfoWindow;
+                
+                if (navigator.geolocation) 
+                {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        pos = {
+                          lat: position.coords.latitude,
+                          lng: position.coords.longitude
+                        };
+
+                        origin = pos;
+
+                        infoWindow.setPosition(pos);
+                        infoWindow.setContent('Your Current Location');
+                        infoWindow.open(map_canvas);
+                        map.setCenter(pos);
+                    },
+                    function() 
+                    {
+                        handleLocationError(true, infoWindow, map.getCenter());
+                    });
+                } 
+                else 
+                {
+                    handleLocationError(false, infoWindow, map.getCenter());
+                }
+                
+                var myOptions = {
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+                var _origin = origin;
+                var _destination = "23.798407, 90.449108";
+                // init directions service
+                var dirService = new google.maps.DirectionsService();
+                var dirRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+                dirRenderer.setMap(map);
+
+                // highlight a street
+                var request = {
+                    origin: _origin,
+                    destination: _destination,
+                    travelMode: google.maps.TravelMode.DRIVING
+                };
+                dirService.route(request, function(result, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        dirRenderer.setDirections(result);
+                    }
+                });
+            }
+        </script>
+        <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyGV6olIgW9T9BjgSI_5MquT0XWd70v5w&callback=initMap">
+        </script>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Thesis/Project</title>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
+        
+        <!--Bootstrap CSS Link-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        
+        <!--Google Fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lato:700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
+        
+        <style type="text/css">
+            html,body,#body,#main_row 
+            {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            #main_row
+            {
+                padding: 50px 0px;
+            }
+            #map 
+            {
+                height: 100%;
+            }
+            .btn
+            {
+                color: #ffffff;
+            }
+            #map_body
+            {
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.25);
+                box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3), 0 5px 15px 0 rgba(0, 0, 0, 0.50);
+                transition: all 500ms ease;
+                border: 5px solid rgba(255,255,255,0.5);
+            }    
+        </style>
+    </head>
+    
+    <body>
+        <div id="body">
+            <div id="main_row" class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <div class="row">
+                        <button id="allbusstop_button" class="btn btn-warning" onclick="allbusstop()">All Bus Stop</button>
+                    </div>
+                    <br><br>
+                    <div class="row">
+                        <button class="btn btn-success">Nearest Bus</button>
+                    </div>
+                    <br><br>
+                    <div class="row">
+                        <button class="btn btn-info">Bus Stop Radius</button>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div id="map_body">
+                        <div id="map"></div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+    </body>
+    
+    <!--Google API JavaScript-->
+    <script type="text/javascript">
+        var map, infoWindow, pos;
+        function initMap() 
+        {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: -34.397, lng: 150.644},
+                zoom: 12,
+                
+                styles:
+                [
+                  {
+                    "elementType": "geometry",
+                    "stylers": [
+                      {
+                        "color": "#212121"
+                      }
+                    ]
+                  },
+                  {
+                    "elementType": "labels.icon",
+                    "stylers": [
+                      {
+                        "visibility": "off"
+                      }
+                    ]
+                  },
+                  {
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                      {
+                        "color": "#757575"
+                      }
+                    ]
+                  },
+                  {
+                    "elementType": "labels.text.stroke",
+                    "stylers": [
+                      {
+                        "color": "#212121"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "administrative",
+                    "elementType": "geometry",
+                    "stylers": [
+                      {
+                        "color": "#757575"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "administrative.country",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                      {
+                        "color": "#9e9e9e"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "administrative.land_parcel",
+                    "stylers": [
+                      {
+                        "visibility": "off"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "administrative.locality",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                      {
+                        "color": "#bdbdbd"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "poi",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                      {
+                        "color": "#757575"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "poi.park",
+                    "elementType": "geometry",
+                    "stylers": [
+                      {
+                        "color": "#181818"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "poi.park",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                      {
+                        "color": "#616161"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "poi.park",
+                    "elementType": "labels.text.stroke",
+                    "stylers": [
+                      {
+                        "color": "#1b1b1b"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "road",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                      {
+                        "color": "#2c2c2c"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "road",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                      {
+                        "color": "#8a8a8a"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "road.arterial",
+                    "elementType": "geometry",
+                    "stylers": [
+                      {
+                        "color": "#373737"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "road.highway",
+                    "elementType": "geometry",
+                    "stylers": [
+                      {
+                        "color": "#3c3c3c"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "road.highway.controlled_access",
+                    "elementType": "geometry",
+                    "stylers": [
+                      {
+                        "color": "#4e4e4e"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "road.local",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                      {
+                        "color": "#616161"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "transit",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                      {
+                        "color": "#757575"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "water",
+                    "elementType": "geometry",
+                    "stylers": [
+                      {
+                        "color": "#000000"
+                      }
+                    ]
+                  },
+                  {
+                    "featureType": "water",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                      {
+                        "color": "#3d3d3d"
+                      }
+                    ]
+                  }
+                ]
+            });
+            infoWindow = new google.maps.InfoWindow;
+
+            /*Getting Self Location*/
+            
+            if (navigator.geolocation) 
+            {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    pos = {
+                      lat: position.coords.latitude,
+                      lng: position.coords.longitude
+                    };
+                   
+                    
+                    infoWindow.setPosition(pos);
+                    infoWindow.setContent('Your Current Location');
+                    infoWindow.open(map);
+                    map.setCenter(pos);
+                },
+                function() 
+                {
+                    handleLocationError(true, infoWindow, map.getCenter());
+                });
+            } 
+            else 
+            {
+                handleLocationError(false, infoWindow, map.getCenter());
+            }
+            
+            console.log(pos);
+            
+            /*Customized Icon*/
+            
+            /*var icons = {
+              info: {
+                icon: "img/bus_stop.png"
+              }
+            };*/
+            
+            /*UIU Permanent Campus Location*/
+            
+            /*var uiu_location = {
+                position: new google.maps.LatLng(23.797774,90.4477333),
+                type: 'info'
+            };*/  
+            
+            /*var marker = new google.maps.Marker({
+                position: uiu_location.position,
+                icon: icons[uiu_location.type].icon,
+                map: map
+            });
+            
+            
+           
+            console.log(currentLocation);
+            var busstop = uiu_location.position;
+            console.log(busstop);
+            */
+            // Add Radius To Location Marker
+            /*var circle = new google.maps.Circle({
+              map: map,
+              radius: 200,    // 10 miles in metres
+              fillColor: '#AA0000'
+            });
+            circle.bindTo('center', marker, 'position');
+            */
+            
+            /*Direction*/
+            /*var myOptions = {
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("map"), myOptions);
+            var dirService = new google.maps.DirectionsService();
+            var dirRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+            dirRenderer.setMap(map);
+
+            // highlight a street
+            var request = {
+                origin: currentLocation,
+                destination: uiu_location.position,
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+            dirService.route(request, function(result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    dirRenderer.setDirections(result);
+                }
+            });*/
+
+        }
+
+        /*Nearest Bus Location*/
+        /*function nearestbusstop()
+        {
+            var mylocation = pos;
+            var nearestbusstop = findnearestbusstop();
+            
+        }*/
+        
+        /*Finding Nearest Bus*/
+        /*function findnearestbusstop()
+        {
+            var distance1 = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(pos), new google.maps.LatLng(23.744306, 90.372549)); // 15 No Bus Stand    
+            var distance2 = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(pos), new google.maps.LatLng(23.750679, 90.368181)); // Shongkor Bus Stand
+            var distance3 = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(pos), new google.maps.LatLng(23.757253, 90.361807)); // BRTC Bus Stand
+            var distance4 = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(pos), new google.maps.LatLng(23.758463, 90.375548)); // Manik Mia Avenue
+            var distance5 = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(pos), new google.maps.LatLng(23.759466, 90.389568)); // BARC, Khamarbari Road
+            var distance6 = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(pos), new google.maps.LatLng(23.781096, 90.398929)); // Amtoli Bus Stand 
+            var distance7 = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(pos), new google.maps.LatLng(23.780711, 90.424851)); // Link Road Bus Stand
+            var distance8 = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(pos), new google.maps.LatLng(23.798407, 90.449108)); // UIU Permanent Campus
+            
+            var nearestdistance = Math.min(distance1,distance2,distance3,distance4,distance5,distance6,distance7,distance8);
+            
+            if(nearestdistance == distance1)
+            {
+                return "15 No Bus Stand, Satmasjid Road, Dhanmondi, Dhaka";
+            }
+            else if(nearestdistance == distance2)
+            {
+                return "Sankar Bus Stop, Satmasjid Road, Dhaka";
+            }
+            else if(nearestdistance == distance3)
+            {
+                return "BRTC Mohammadpur Bus Stop, Dhaka";     
+            }
+            else if(nearestdistance == distance4)
+            {
+                return "Manik Mia Avenue, Dhaka"; 
+            }
+            else if(nearestdistance == distance5)
+            {
+                return "Bangladesh Agricultural Research Council (BARC), Khamarbari Road, Dhaka 1215";       
+            }
+            else if(nearestdistance == distance6)
+            {
+                return "Amtoli Bus Stand, Dhaka";   
+            }
+            else if(nearestdistance == distance7)
+            {
+                return "Link Road Bus Stand, Dhaka";    
+            }
+            else if(nearestdistance == distance8)
+            {
+                return "United International University, Dhaka";       
+            }
+        }*/
+        
+        /*All Bus Stop*/
+        
+        /*function allbusstop() 
+        {
+            var icons = {
+                  info: {
+                    icon: "img/bus_stop.png"
+                  }
+            };
+            var allbusstop_list = [
+                {
+                    position: new google.maps.LatLng(23.744306, 90.372549),
+                    type: 'info'
+                },
+                {
+                    position: new google.maps.LatLng(23.750679, 90.368181),
+                    type: 'info'
+                },
+                {
+                    position: new google.maps.LatLng(23.757253, 90.361807),
+                    type: 'info'
+                },
+                {
+                    position: new google.maps.LatLng(23.758463, 90.375548),
+                    type: 'info'
+                },
+                {
+                    position: new google.maps.LatLng(23.759466, 90.389568),
+                    type: 'info'
+                },
+                {
+                    position: new google.maps.LatLng(23.781096, 90.398929),
+                    type: 'info'
+                },
+                {
+                    position: new google.maps.LatLng(23.780711, 90.424851),
+                    type: 'info'
+                },
+                {
+                    position: new google.maps.LatLng(23.798407, 90.449108),
+                    type: 'info'
+                }
+            ];
+
+            allbusstop_list.forEach(function(allbusstop_list) {
+                var marker = new google.maps.Marker({
+                    position: allbusstop_list.position,
+                    icon: icons[allbusstop_list.type].icon,
+                    map: map
+                });
+            });
+        }*/
+
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) 
+        {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+                          'Error: Can\'t Find Your Location.' :
+                          'Error: Your Browser Doesn\'t Support Location Service.');
+            infoWindow.open(map);
+        }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyGV6olIgW9T9BjgSI_5MquT0XWd70v5w&callback=initMap">
+    </script>
+    
+</html>
